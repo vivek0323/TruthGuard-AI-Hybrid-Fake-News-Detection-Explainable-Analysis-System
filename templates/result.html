@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis Result - AI Fake News Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="results-container">
+
+        <!-- Back Button -->
+        <a href="/" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Analyze Another Article
+        </a>
+
+        <!-- Result Card -->
+        <div class="result-card {{ 'real' if prediction == 'REAL' else 'fake' }}">
+            
+            <div class="result-icon">
+                {% if prediction == 'REAL' %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="fas fa-times-circle"></i>
+                {% endif %}
+            </div>
+            
+            <h1 class="result-title">{{ prediction }}</h1>
+            
+            <div class="confidence-section">
+                <i class="fas fa-chart-line"></i>
+                <p class="confidence-text">Confidence: {{ confidence }}%</p>
+            </div>
+
+            <div class="confidence-bar">
+                <div class="confidence-fill" 
+                     id="confidenceFill" 
+                     data-confidence="{{ confidence if confidence else 0 }}">
+                </div>
+            </div>
+
+            <p class="analyzed-file">
+                <i class="fas fa-file-alt"></i> 
+                Analyzed: {{ filename if filename else "Uploaded File" }}
+            </p>
+        </div>
+
+        <!-- AI Analysis Section -->
+        <div class="analysis-section">
+            <h2 class="section-title">
+                <i class="fas fa-robot"></i> AI Analysis Report
+            </h2>
+            
+            <div class="analysis-card">
+                <div class="analysis-icon-wrapper purple">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="analysis-content">
+                    <div class="ai-text">{{ ai_text }}</div>
+                </div>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="info-cards">
+
+                <div class="info-card">
+                    <div class="info-icon blue">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>What to Do Next</h3>
+                    <ul>
+                        <li>Cross-reference with reputable news sources</li>
+                        <li>Check the author's credentials</li>
+                        <li>Verify quoted statistics</li>
+                        <li>Check publication date</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon pink">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Red Flags</h3>
+                    <ul>
+                        <li>Clickbait headlines</li>
+                        <li>Anonymous sources</li>
+                        <li>Emotional language</li>
+                        <li>No supporting evidence</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon orange">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Fact-Check Resources</h3>
+                    <ul>
+                        <li>Snopes.com</li>
+                        <li>FactCheck.org</li>
+                        <li>PolitiFact</li>
+                        <li>Reuters / AP News</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="action-section">
+            <a href="/" class="action-btn">
+                <i class="fas fa-redo"></i> Analyze Another Article
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // Animate confidence bar
+        window.addEventListener('load', function() {
+            const bar = document.querySelector('.confidence-fill');
+            if (bar) {
+                bar.style.transition = 'width 1.5s ease-out';
+            }
+        });
+
+        // Format AI text safely
+        document.addEventListener("DOMContentLoaded", function() {
+            const aiTextElement = document.querySelector('.ai-text');
+            if (!aiTextElement) return;
+
+            let text = aiTextElement.innerText;
+
+            // Bold formatting (**text**)
+            text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+            // Numbered headings
+            text = text.replace(/(\d+\.\s)/g, "<br><strong>$1</strong>");
+
+            // Bullet points
+            text = text.replace(/\n- /g, "<br>• ");
+
+            // Paragraph breaks
+            text = text.replace(/\n\n/g, "<br><br>");
+            text = text.replace(/\n/g, "<br>");
+
+            aiTextElement.innerHTML = text;
+        });
+    </script>
+
+</body>
+</html>

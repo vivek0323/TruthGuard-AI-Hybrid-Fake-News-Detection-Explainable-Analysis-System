@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fake News Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>AI Fake News Detector</h1>
+                    <p>Powered by Machine Learning & AI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h2 class="hero-title">
+                Detect Fake News with <span class="gradient-text">AI Precision</span>
+            </h2>
+            <p class="hero-subtitle">
+                Upload any article as a PDF or image, and our advanced AI will analyze it for
+                misinformation, bias, and credibility in seconds.
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon purple">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI Analysis</h3>
+                <p>Deep learning detection</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon blue">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>95%+ Accuracy</h3>
+                <p>Trained on millions</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon pink">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Instant Results</h3>
+                <p>Real-time verification</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon orange">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Bias Detection</h3>
+                <p>Emotional analysis</p>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <form action="/analyze" method="post" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-box" id="uploadBox">
+                    <input type="file" name="file" id="fileInput" accept=".pdf,image/*" required>
+                    
+                    <div class="upload-content" id="uploadContent">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Upload Article or Image</h3>
+                        <p>Drag and drop or click to browse</p>
+                        <label for="fileInput" class="upload-btn">Choose File</label>
+                        <div class="file-types">
+                            <span><i class="fas fa-file-pdf"></i> PDF</span>
+                            <span><i class="fas fa-file-image"></i> JPG, PNG</span>
+                        </div>
+                    </div>
+
+                    <div class="file-selected" id="fileSelected" style="display: none;">
+                        <div class="file-icon-container">
+                            <i class="fas fa-file-alt file-display-icon"></i>
+                        </div>
+                        <div class="file-info">
+                            <p class="file-name" id="fileName"></p>
+                            <p class="file-size" id="fileSize"></p>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="analyze-btn" id="analyzeBtn">
+                                <i class="fas fa-search"></i> Analyze Article
+                            </button>
+                            <button type="button" class="remove-btn" id="removeBtn">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- How It Works -->
+        <div class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number purple-gradient">1</div>
+                    <h3>Upload Article</h3>
+                    <p>Upload your news article as a PDF or image. Our system accepts multiple formats for your convenience.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number blue-gradient">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our trained ML model analyzes the content, detecting patterns, bias, and suspicious claims.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number pink-gradient">3</div>
+                    <h3>Get Results</h3>
+                    <p>Receive instant verdict with confidence score, detailed analysis, and fact-checking suggestions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadBox = document.getElementById('uploadBox');
+        const uploadContent = document.getElementById('uploadContent');
+        const fileSelected = document.getElementById('fileSelected');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeBtn = document.getElementById('removeBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        // File input change
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                displayFile(e.target.files[0]);
+            }
+        });
+
+        // Drag and drop
+        uploadBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadBox.classList.add('dragging');
+        });
+
+        uploadBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragging');
+        });
+
+        uploadBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragging');
+            
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                displayFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // Display file info
+        function displayFile(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+            
+            uploadContent.style.display = 'none';
+            fileSelected.style.display = 'block';
+
+            // Change icon based on file type
+            const fileIcon = document.querySelector('.file-display-icon');
+            if (file.type.includes('pdf')) {
+                fileIcon.className = 'fas fa-file-pdf file-display-icon';
+            } else if (file.type.includes('image')) {
+                fileIcon.className = 'fas fa-file-image file-display-icon';
+            }
+        }
+
+        // Remove file
+        removeBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            uploadContent.style.display = 'block';
+            fileSelected.style.display = 'none';
+        });
+
+        // Form submit with loading state
+        uploadForm.addEventListener('submit', function() {
+            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            analyzeBtn.disabled = true;
+            removeBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
